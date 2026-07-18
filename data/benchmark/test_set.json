@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "question": "Cine a fondat Politehnica din București?",
+        "context": "Universitatea Politehnica din București a fost înființată în 1818 de Gheorghe Lazăr.",
+        "expected_type": "supported",
+        "ground_truth": "Gheorghe Lazăr"
+    },
+    {
+        "id": 2,
+        "question": "Care este capitala Japoniei?",
+        "context": "Context irelevant despre istoria tehnologiei în România.",
+        "expected_type": "unanswerable",
+        "ground_truth": null
+    },
+    {
+        "id": 3,
+        "question": "Este Bucureștiul în Franța?",
+        "context": "Document A: București este în România. Document B: București este în Franța.",
+        "expected_type": "contradictory",
+        "ground_truth": null
+    }
+]

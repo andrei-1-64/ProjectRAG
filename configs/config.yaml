@@ -1,0 +1,16 @@
+project:
+  name: "RoRAG-Trust"
+  device: "cuda" # sau "cpu"
+
+retrieval:
+  top_k: 5
+  chunk_size: 512
+  overlap: 50
+
+verification:
+  nli_model: "nli-model-ro-path" # ex: un model finetuned pe date românești
+  abstention_threshold: 0.75 # pragul sub care sistemul refuză să răspundă
+
+generation:
+  model_name: "gpt-4o" # sau un model local precum Mistral/Llama3
+  temperature: 0.0
