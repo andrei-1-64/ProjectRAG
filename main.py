@@ -1,26 +1,26 @@
-# main.py completat
-
 import yaml
-from utils.logger import setup_logger
+import logging
 from retrieval.hybrid import HybridRetriever
 from generation.generator import Generator
 from verification.claim_splitter import ClaimSplitter
 from verification.entailment import CitationVerifier
 from verification.abstention import AbstentionPolicy
+from evaluation.faithfulness import FaithfulnessEvaluator
 
-# 1. Încarcă configurația
-with open("configs/config.yaml", "r") as f:
-    config = yaml.safe_load(f)
+# Configurare Logging - esențial pentru cercetare
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger("RoRAG-Trust")
 
-# 2. Inițializează modulele
-retriever = HybridRetriever(config['retrieval'])
-generator = Generator(config['generation'])
-verifier = CitationVerifier(config['verification'])
-abstention_policy = AbstentionPolicy(config['verification']['abstention_threshold'])
-logger = setup_logger("RoRAG")
+def run_pipeline(query, config):
+    # Inițializare module bazată pe config
+    retriever = HybridRetriever(config['retrieval'])
+    generator = Generator(config['generation'])
+    splitter = ClaimSplitter()
+    verifier = CitationVerifier(config['verification']['nli_model'])
+    policy = AbstentionPolicy(config['verification']['abstention_threshold'])
+    evaluator = FaithfulnessEvaluator(config['verification']['abstention_threshold'])
 
-def run_pipeline(query):
-    logger.info(f"Query: {query}")
+    logger.info(f"Procesare query: {query}")
     
     # 1. Recuperare
     docs = retriever.search(query)
@@ -29,15 +29,23 @@ def run_pipeline(query):
     answer = generator.generate(query, docs)
     
     # 3. Verificare (Novel contribution)
-    claims = claim_splitter.extract(answer)
-    # Stocăm rezultatele detaliate pentru raport (de ex: scorul pentru fiecare claim)
-    verification_details = [{"claim": c, "score": verifier.verify(c, docs)} for c in claims]
-    results = [d["score"] for d in verification_details]
+    claims = splitter.extract(answer)
+    verifications = [verifier.verify(c, docs) for c in claims]
     
-    # 4. Decizie și LOGGING
-    if abstention_policy.should_abstain(results):
-        logger.warning(f"Abstention triggered for query: {query}. Details: {verification_details}")
-        return "Îmi pare rău, dar nu pot verifica acuratețea acestui răspuns.", None
+    # 4. Evaluare Faithfulness & Abstinență
+    is_faithful, score = evaluator.validate_answer(verifications)
     
-    logger.info(f"Answer returned: {answer}")
-    return answer, verification_details
+    if policy.should_abstain(verifications):
+        logger.warning(f"Abstinență declanșată pentru: {query} (Scor: {score:.2f})")
+        return "Îmi pare rău, dar informațiile sunt insuficiente sau contradictorii.", score
+    
+    logger.info(f"Răspuns validat (Scor: {score:.2f})")
+    return answer, score
+
+if __name__ == "__main__":
+    with open("configs/config.yaml", "r") as f:
+        config = yaml.safe_load(f)
+    
+    # Exemplu de apel
+    ans, conf = run_pipeline("Cine a fondat Politehnica din București?", config)
+    print(f"Rezultat: {ans} | Încredere: {conf}")
