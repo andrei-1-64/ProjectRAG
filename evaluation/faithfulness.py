@@ -3,13 +3,11 @@ class FaithfulnessEvaluator:
         self.threshold = threshold
 
     def compute_faithfulness_score(self, verification_results):
-        """
-        verification_results: listă de scoruri (float) primite de la CitationVerifier
-        """
+
         if not verification_results:
             return 0.0
         
-        # Media scorurilor de suport (Entailment) pentru toate claim-urile
+       
         avg_score = sum(verification_results) / len(verification_results)
         return avg_score
 

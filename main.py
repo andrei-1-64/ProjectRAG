@@ -7,12 +7,12 @@ from verification.entailment import CitationVerifier
 from verification.abstention import AbstentionPolicy
 from evaluation.faithfulness import FaithfulnessEvaluator
 
-# Configurare Logging - esențial pentru cercetare
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("RoRAG-Trust")
 
 def run_pipeline(query, config):
-    # Inițializare module bazată pe config
+   
     retriever = HybridRetriever(config['retrieval'])
     generator = Generator(config['generation'])
     splitter = ClaimSplitter()
@@ -22,14 +22,14 @@ def run_pipeline(query, config):
 
     logger.info(f"Procesare query: {query}")
     
-    # 1. Recuperare
+  
     docs = retriever.search(query)
     
-    # 2. Generare
+ 
     answer = generator.generate(query, docs)
     print(f"\n[DEBUG] Răspunsul brut al lui Qwen: {answer}")
     
-    # 3. Verificare (Novel contribution)
+  
     claims = splitter.extract(answer)
     print(f"[DEBUG] Afirmații extrase pentru verificare: {claims}")
     
@@ -39,7 +39,7 @@ def run_pipeline(query, config):
         print(f"[DEBUG] Scor Entailment pentru '{c}': {score:.4f}")
         verifications.append(score)
     
-    # 4. Evaluare Faithfulness & Abstinență
+
     is_faithful, score = evaluator.validate_answer(verifications)
     
     if policy.should_abstain(verifications):
@@ -53,6 +53,6 @@ if __name__ == "__main__":
     with open("configs/config.yaml", "r") as f:
         config = yaml.safe_load(f)
     
-    # Exemplu de apel
+  
     ans, conf = run_pipeline("De cine a fost fondata politehnica din Bucuresti?", config)
     print(f"\nRezultat final: {ans} | Încredere: {conf:.4f}")

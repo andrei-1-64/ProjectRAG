@@ -1,6 +1,6 @@
 project:
   name: "RoRAG-Trust"
-  device: "cuda" # sau "cpu"
+  device: "cuda" 
 
 retrieval:
   top_k: 5
@@ -8,9 +8,9 @@ retrieval:
   overlap: 50
 
 verification:
-  nli_model: "cross-encoder/nli-deberta-v3-base" # Acesta este un model standard, foarte capabil
+  nli_model: "cross-encoder/nli-deberta-v3-base" 
   abstention_threshold: 0.75
   
 generation:
-  model_name: "gpt-4o" # sau un model local precum Mistral/Llama3
+  model_name: "gpt-4o" 
   temperature: 0.0
