@@ -1,0 +1,15 @@
+# Biblioteci pentru RAG și procesare limbaj natural
+transformers
+torch
+sentence-transformers
+rank_bm25
+faiss-cpu
+spacy
+
+# Biblioteci pentru utilități și configurare
+pyyaml
+openai
+
+# Biblioteci pentru analiză și date
+numpy
+pandas

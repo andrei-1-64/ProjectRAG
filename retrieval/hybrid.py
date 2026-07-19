@@ -6,13 +6,13 @@ import numpy as np
 class HybridRetriever:
     def __init__(self, config):
         self.top_k = config.get('top_k', 5)
-        self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2') # Bun pentru Română
-        self.documents = [] # Aici vei încărca documentele tale
+        self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        self.documents = ["București este capitala României.", "Politehnica București a fost fondată în 1818."] # Exemplu de date
         self.bm25 = None
         self.index = None
+        self.fit(self.documents) # Inițializăm automat la pornire
 
     def fit(self, documents):
-        """Pre-procesare documente pentru BM25 și FAISS"""
         self.documents = documents
         tokenized_corpus = [doc.split(" ") for doc in documents]
         self.bm25 = BM25Okapi(tokenized_corpus)

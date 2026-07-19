@@ -1,0 +1,38 @@
+[
+    {
+        "mode": "full",
+        "question": "Cine a fondat Politehnica din Bucure\u00c8\u2122ti?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 0.9997487664222717
+    },
+    {
+        "mode": "full",
+        "question": "Care este capitala Japoniei?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 0.9997487664222717
+    },
+    {
+        "mode": "full",
+        "question": "Este Bucure\u00c8\u2122tiul \u00c3\u00aen Fran\u00c8\u203aa?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 0.9997487664222717
+    },
+    {
+        "mode": "baseline",
+        "question": "Cine a fondat Politehnica din Bucure\u00c8\u2122ti?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 1.0
+    },
+    {
+        "mode": "baseline",
+        "question": "Care este capitala Japoniei?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 1.0
+    },
+    {
+        "mode": "baseline",
+        "question": "Este Bucure\u00c8\u2122tiul \u00c3\u00aen Fran\u00c8\u203aa?",
+        "answer": "Acesta este un r\u0103spuns generat pe baza surselor.",
+        "is_faithful": 1.0
+    }
+]

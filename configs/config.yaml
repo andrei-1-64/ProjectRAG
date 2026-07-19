@@ -8,9 +8,9 @@ retrieval:
   overlap: 50
 
 verification:
-  nli_model: "nli-model-ro-path" # ex: un model finetuned pe date românești
-  abstention_threshold: 0.75 # pragul sub care sistemul refuză să răspundă
-
+  nli_model: "cross-encoder/nli-deberta-v3-base" # Acesta este un model standard, foarte capabil
+  abstention_threshold: 0.75
+  
 generation:
   model_name: "gpt-4o" # sau un model local precum Mistral/Llama3
   temperature: 0.0
