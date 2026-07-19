@@ -20,4 +20,4 @@ class CitationVerifier:
         
         # Scorul de 'entailment' (presupunem indexul 2 ca fiind 'entailment')
         probs = torch.softmax(logits, dim=1)
-        return probs[0][2].item()
+        return probs[0][1].item()

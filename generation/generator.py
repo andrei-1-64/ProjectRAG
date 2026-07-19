@@ -1,21 +1,52 @@
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
 class Generator:
     def __init__(self, config):
-        self.model_name = config.get('model_name', 'gpt-4o')
-        self.temperature = config.get('temperature', 0.0)
-        # Aici poți inițializa clientul OpenAI sau modelul local (ex: HuggingFace pipeline)
+        # Alegem un model extrem de ușor, capabil să ruleze pe CPU
+        self.model_name = "Qwen/Qwen2.5-0.5B-Instruct"
+        print(f"Încărcăm modelul local {self.model_name}... (ar putea dura puțin la prima rulare pentru a-l descărca)")
+        
+        # Încărcăm Tokenizer-ul și Modelul
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        
+        # Încărcăm modelul forțat pe CPU pentru a evita erori dacă nu ai GPU configurat
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name,
+            torch_dtype=torch.float32, 
+            device_map="cpu" 
+        )
+        
+        # Creăm pipeline-ul de generare
+        self.pipe = pipeline(
+            "text-generation",
+            model=self.model,
+            tokenizer=self.tokenizer,
+            max_new_tokens=150,
+            temperature=0.1,
+            do_sample=True
+        )
 
     def generate(self, query, docs):
-        """
-        Generează un răspuns bazat pe interogare și documentele recuperate.
-        """
-        # Crearea contextului din documentele recuperate
-        context_str = "\n\n".join(docs)
+        context_str = "\n\n".join(docs) if docs else "Fără surse suplimentare."
         
-        # Aici va veni logica de apel către LLM
-        prompt = f"Folosește următoarele informații pentru a răspunde la întrebare:\n\n{context_str}\n\nÎntrebare: {query}"
+        # Construim mesajele în formatul standard de chat
+        messages = [
+            {"role": "system", "content": f"Ești un asistent strict. Răspunde scurt, doar pe baza surselor oferite.\nSurse: {context_str}"},
+            {"role": "user", "content": query}
+        ]
         
-        # Exemplu simulat de răspuns (înlocuiește cu apelul real către API-ul tău)
-        return "Acesta este un răspuns generat pe baza surselor."
+        # Aplicăm template-ul specific Qwen
+        prompt = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
 
-    def __call__(self, query, docs):
-        return self.generate(query, docs)
+        try:
+            outputs = self.pipe(prompt)
+            # Textul generat include și prompt-ul, așa că îl decupăm pentru a returna doar răspunsul curat
+            generated_text = outputs[0]["generated_text"][len(prompt):].strip()
+            return generated_text
+        except Exception as e:
+            return f"Eroare la generarea locală: {str(e)}"

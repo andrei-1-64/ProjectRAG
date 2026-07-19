@@ -27,10 +27,17 @@ def run_pipeline(query, config):
     
     # 2. Generare
     answer = generator.generate(query, docs)
+    print(f"\n[DEBUG] Răspunsul brut al lui Qwen: {answer}")
     
     # 3. Verificare (Novel contribution)
     claims = splitter.extract(answer)
-    verifications = [verifier.verify(c, docs) for c in claims]
+    print(f"[DEBUG] Afirmații extrase pentru verificare: {claims}")
+    
+    verifications = []
+    for c in claims:
+        score = verifier.verify(c, docs)
+        print(f"[DEBUG] Scor Entailment pentru '{c}': {score:.4f}")
+        verifications.append(score)
     
     # 4. Evaluare Faithfulness & Abstinență
     is_faithful, score = evaluator.validate_answer(verifications)
@@ -47,5 +54,5 @@ if __name__ == "__main__":
         config = yaml.safe_load(f)
     
     # Exemplu de apel
-    ans, conf = run_pipeline("Cine a fondat Politehnica din București?", config)
-    print(f"Rezultat: {ans} | Încredere: {conf}")
+    ans, conf = run_pipeline("De cine a fost fondata politehnica din Bucuresti?", config)
+    print(f"\nRezultat final: {ans} | Încredere: {conf:.4f}")
